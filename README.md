@@ -159,13 +159,14 @@ TL:DR
 
 Примеры:
 !speak Привет
-!speak --speaker aidar Привет от Айдара
-!speak --pitch 60 --rate 55 Быстрая высокая речь
-!speak --speaker baya --pitch 45 --rate 40 Медленный мягкий голос
+!speak Привет от Айдара --speaker aidar 
+!speak Быстрая высокая речь --pitch 60 --rate 55 
+!speak Медленный мягкий голос --speaker baya --pitch 45 --rate 40 
 """
 ```
 
 Сделано с ❤️ для сообщества Mumble
+
 
 
 
