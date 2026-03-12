@@ -100,7 +100,7 @@ docker-compose up --build -d
 <br>
 <br>
 
-Примеры для !speak:
+Команды !speak:
 
 - --speaker xeina (доступны: xenia, aidar, baya, kseniya, eugene, random) Выбор голоса
 - --pitch  0–100 (50 = норма) Высота голоса (>50 = выше)
@@ -165,5 +165,6 @@ TL:DR
 ```
 
 Сделано с ❤️ для сообщества Mumble
+
 
 
