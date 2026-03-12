@@ -114,10 +114,11 @@ docker-compose up --build -d
 Примеры использования:
 <br>
 ```
+!speak {{ текст }} {{ команды --speaker --rate -- pitch }}
 !speak Привет
-!speak --speaker aidar Привет от Айдара
-!speak --pitch 60 --rate 55 Быстрая высокая речь
-!speak --speaker baya --pitch 45 --rate 40 Медленный мягкий голос
+!speak Привет от Айдара --speaker aidar 
+!speak Быстрая высокая речь --pitch 60 --rate 55 
+!speak Медленный мягкий голос --speaker baya --pitch 45 --rate 40 
 !speak раз два три --speaker aidar --pitch 32 --rate 12
 ```
 <br>
@@ -165,6 +166,7 @@ TL:DR
 ```
 
 Сделано с ❤️ для сообщества Mumble
+
 
 
 
