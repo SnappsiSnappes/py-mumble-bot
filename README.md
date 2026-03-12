@@ -143,9 +143,9 @@ TL:DR
 
 
 🛡️ Защита от мута пользователями
-1) ```docker-compose up --build -d```
-2) выключаем ```docker-compose down```
-3) снова включаем ```docker-compose up --build -d```
+1) docker-compose up --build -d
+2) выключаем docker-compose down
+3) снова включаем docker-compose up --build -d
 
 типичные примеры:
 
@@ -166,6 +166,7 @@ TL:DR
 ```
 
 Сделано с ❤️ для сообщества Mumble
+
 
 
 
