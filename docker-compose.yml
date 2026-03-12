@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # === Mumble Bot ===
+  mumble-bot:
+    build: .
+    container_name: mumble-music-bot
+    restart: unless-stopped
+    
+    env_file:
+      - .env
+    
+    volumes:
+      - ./certs:/app/certs
+      - ./music:/app/music:ro
+      - ./logs:/app/logs
+      - ./src:/app/src:ro
+      - ./cookies:/app/cookies:ro
+    
+    environment:
+      - YTDLP_COOKIES=/app/cookies/cookies_youtube.txt
+      - TTS_API_URL=http://silero-tts:8000  # ← Ссылка на TTS-сервис внутри Docker
+    
+    depends_on:
+      - silero-tts  # ← Запускать после TTS
+    
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: '0.75'
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # === Silero TTS API ===
+  silero-tts:
+    image: twirapp/silero-tts-api-server:latest
+    container_name: silero-tts
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # Опционально: доступ к API с хоста для отладки
+    environment:
+      - TEXT_LENGTH_LIMIT=930  # Лимит текста (по умолчанию 930)
+      - MKL_NUM_THREADS=2      # Потоки для генерации (экономим ресурсы)
+    deploy:
+      resources:
+        limits:
+          memory: 1224M  # Silero требует памяти для моделей
+          cpus: '1.0'
