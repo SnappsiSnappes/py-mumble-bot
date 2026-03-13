@@ -355,7 +355,7 @@ class MumbleMusicBot:
             ).start()
         else:
             self.send_text(f"❌ Файл не найден: {search_name}")
-
+  
     @command("stop", "Остановить воспроизведение и очистить очередь")
     def cmd_stop(self):
         """!stop — остановить музыку, речь и очистить очередь TTS."""
@@ -750,6 +750,8 @@ class MumbleMusicBot:
         """Callback: успешно подключились."""
         print("✅ Подключено к серверу!")
         self.send_text("🤖 Бот подключен! 🎵")
+        threading.Thread(target=self._speak_startup_message, daemon=True).start()
+
         # Автовоспроизведение дефолтного трека
         if default := self.config.get("default_song"):
             song_path = Path(self.config["music_folder"]) / default
@@ -800,7 +802,74 @@ class MumbleMusicBot:
         self.disconnect()
         sys.exit(0)
 
-
+    def _check_tts_health(self, timeout: int = 5, max_retries: int = 5, retry_delay: int = 3) -> bool:
+        """
+        Проверяет доступность Silero TTS API через /speakers.
+        Делает несколько попыток с задержкой — на случай, что сервис ещё загружается.
+        """
+        import requests
+        import time
+        
+        tts_url = self.config.get("tts_api_url", "http://silero-tts:8000").rstrip('/')
+        health_url = f"{tts_url}/speakers"
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                print(f"🔍 TTS проверка ({attempt}/{max_retries}): {health_url}...")
+                response = requests.get(health_url, timeout=timeout)
+                response.raise_for_status()
+                
+                speakers = response.json()
+                if speakers and any(speakers.values()):
+                    print(f"✅ TTS онлайн с {attempt} попытки! Языков: {len(speakers)}")
+                    all_speakers = [s for lang_spks in speakers.values() for s in lang_spks]
+                    ru_known = [s for s in all_speakers if s in ["aidar", "baya", "kseniya", "xenia", "eugene", "random"]]
+                    if ru_known:
+                        print(f"🎙️ Русские голоса: {', '.join(ru_known)}")
+                    return True
+                else:
+                    print(f"⚠ TTS ответил, но спикеры пустые (попытка {attempt})")
+                    
+            except requests.exceptions.ConnectionError:
+                print(f"⏳ TTS недоступен (попытка {attempt}/{max_retries}) — ждём {retry_delay}с...")
+            except requests.exceptions.Timeout:
+                print(f"⏳ TTS таймаут (попытка {attempt}/{max_retries}) — ждём {retry_delay}с...")
+            except Exception as e:
+                print(f"⚠ Ошибка TTS (попытка {attempt}): {type(e).__name__}: {e}")
+            
+            # Пауза перед следующей попыткой (не ждём после последней)
+            if attempt < max_retries:
+                time.sleep(retry_delay)
+        
+        print(f"❌ TTS не ответил после {max_retries} попыток по {retry_delay}с")
+        return False
+    
+    
+    def _speak_startup_message(self):
+        """Озвучивает приветственное сообщение из .env, если TTS доступен."""
+        startup_text = os.getenv("TTS_STARTUP_MESSAGE", "").strip()
+        if not startup_text:
+            print("ℹ️ TTS_STARTUP_MESSAGE не задан, пропускаю озвучку")
+            return
+        
+        # 🔥 Проверяем TTS с повторными попытками (5 раз по 3 сек)
+        if not self._check_tts_health():
+            print("⚠ TTS недоступен после всех попыток, пропускаю озвучку старта")
+            self.send_text("⚠ TTS-сервис ещё загружается...")
+            return
+        
+        # 🔥 Отправляем в очередь TTS — ТОЛЬКО ОДИН РАЗ
+        print(f"🗣️ Озвучиваю старт: '{startup_text}'")
+        self.tts_queue.put({
+            "text": startup_text,
+            "speaker": self._tts_last_speaker,
+            "pitch": self._tts_last_pitch,
+            "rate": self._tts_last_rate,
+            "sample_rate": 48000,
+        })
+        
+        
+        
 # === Точка входа ===
 def main():
     """Инициализация и запуск бота."""
