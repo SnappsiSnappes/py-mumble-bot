@@ -43,15 +43,15 @@ nano .env
 <br>
 
 ```bash
-MUMBLE_HOST  = Адрес Mumble-сервера (обязательно)
-MUMBLE_PORT  = Порт сервера
-MUMBLE_USER  = Имя бота в Mumble
-MUMBLE_PASSWORD  = Пароль сервера (если есть)
-MUMBLE_CHANNEL  = Канал для входа (пусто = корень)
+MUMBLE_HOST  = #Адрес Mumble-сервера (обязательно)
+MUMBLE_PORT  = #Порт сервера
+MUMBLE_USER  = #Имя бота в Mumble
+MUMBLE_PASSWORD  = #Пароль сервера (если есть)
+MUMBLE_CHANNEL  = #Канал для входа (пусто = корень)
 
 # === Audio Settings ===
-MUMBLE_BANDWIDTH=72000  оставить как есть
-MUMBLE_LOOP_RATE=0.01  оставить как есть
+MUMBLE_BANDWIDTH=72000  #оставить как есть
+MUMBLE_LOOP_RATE=0.01  #оставить как есть
 
 # === TTS Settings ===
 TTS_API_URL=http://silero-tts:8000
@@ -63,11 +63,11 @@ TTS_STARTUP_MESSAGE=""  # Текст для озвучки при старте
 
 
 # === Bot Settings ===
-BOT_CERT_FILE=/app/certs/bot_cert.pem оставить как есть
-BOT_KEY_FILE=/app/certs/bot_key.pem оставить как есть
-MUSIC_FOLDER=/app/music оставить как есть
-DEFAULT_SONG="" звук при подключении
-BOT_VOLUME=1
+BOT_CERT_FILE=/app/certs/bot_cert.pem # оставить как есть
+BOT_KEY_FILE=/app/certs/bot_key.pem # оставить как есть
+MUSIC_FOLDER=/app/music # оставить как есть
+DEFAULT_SONG="" # звук при подключении, выбрать из /music вставить название сюда
+BOT_VOLUME=1 # ремендую ставить 0.1
 # === Debug ===
 DEBUG=true можно выключить
 ```
