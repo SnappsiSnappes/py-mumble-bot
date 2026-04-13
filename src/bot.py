@@ -193,11 +193,12 @@ class MumbleMusicBot:
             
             # === 2. Конвертируем через ffmpeg ===
             ffmpeg_cmd = [
-                "ffmpeg", "-i", "pipe:0",
-                "-f", "s16le", "-acodec", "pcm_s16le",
-                "-ar", "48000", "-ac", "1",
-                "-af", "volume=3.0,highpass=f=100,acompressor=threshold=-20dB:ratio=4:attack=20:release=250",
-                "-loglevel", "error", "-"
+                
+            "ffmpeg", "-i", "pipe:0", "-f", "s16le", "-acodec", "pcm_s16le",
+            "-ar", "48000", "-ac", "1",
+            "-af", f"acompressor=threshold=-25dB:ratio=4:attack=20:release=250,alimiter=limit=0.95,volume={self.current_volume * 2.0}",
+            "-loglevel", "error", "-"
+
             ]
             
             process = subprocess.Popen(
@@ -651,7 +652,8 @@ class MumbleMusicBot:
         
         ffmpeg_cmd = [
             "ffmpeg", "-i", path, "-f", "s16le", "-acodec", "pcm_s16le",
-            "-ar", "48000", "-ac", "1", "-af", f"volume={self.current_volume}",
+            "-ar", "48000", "-ac", "1",
+            "-af", f"acompressor=threshold=-25dB:ratio=4:attack=20:release=250,alimiter=limit=0.95,volume={self.current_volume * 2.0}",
             "-loglevel", "error", "-"
         ]
         
